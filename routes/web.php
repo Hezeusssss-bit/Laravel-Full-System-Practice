@@ -58,5 +58,5 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::get('/products/stats', [ProductController::class, 'getStats'])->name('products.stats');
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
-Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+Route::match(['put', 'post'], '/products/{id}', [ProductController::class, 'update'])->name('products.update');
+Route::match(['delete', 'post'], '/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');

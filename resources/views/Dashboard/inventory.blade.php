@@ -1022,13 +1022,14 @@
 
         try {
           const url = productId ? `/products/${productId}` : '/products';
-          const method = productId ? 'PUT' : 'POST';
+          
+          if (productId) {
+            formData.append('_method', 'PUT');
+          }
+          formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
           
           const response = await fetch(url, {
-            method: method,
-            headers: {
-              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-            },
+            method: 'POST',
             body: formData
           });
           
@@ -1139,11 +1140,13 @@
       confirmDelete.addEventListener('click', async function() {
         if (currentDeleteId) {
           try {
+            const formData = new FormData();
+            formData.append('_method', 'DELETE');
+            formData.append('_token', document.querySelector('meta[name="csrf-token"]').content);
+            
             const response = await fetch(`/products/${currentDeleteId}`, {
-              method: 'DELETE',
-              headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-              }
+              method: 'POST',
+              body: formData
             });
             
             const data = await response.json();

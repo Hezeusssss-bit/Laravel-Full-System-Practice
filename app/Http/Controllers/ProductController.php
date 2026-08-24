@@ -139,7 +139,7 @@ class ProductController extends Controller
         }
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         try {
             $product = Product::findOrFail($id);
