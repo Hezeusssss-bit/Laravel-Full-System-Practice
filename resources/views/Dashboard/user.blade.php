@@ -373,6 +373,35 @@
     color:var(--text-low);
   }
 
+  .action-btn{
+    padding:6px 12px;
+    background:var(--field);
+    border:1px solid var(--field-border);
+    color:var(--text-mid);
+    font-size:12px;
+    font-weight:500;
+    border-radius:6px;
+    cursor:pointer;
+    transition:all 0.15s ease;
+    font-family:inherit;
+  }
+
+  .action-btn:hover{
+    border-color:var(--text-low);
+    background:#232426;
+    color:var(--text-hi);
+  }
+
+  .action-btn.primary{
+    background:var(--text-hi);
+    color:var(--black);
+    border-color:var(--text-hi);
+  }
+
+  .action-btn.primary:hover{
+    background:#fff;
+  }
+
   .activity-list{
     padding:0;
     list-style:none;
@@ -456,6 +485,61 @@
       animation:none;
     }
   }
+
+  /* Modal Styles */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.8);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:1000;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .modal-overlay.active{
+    opacity:1;
+    visibility:visible;
+  }
+
+  .modal{
+    background:var(--panel);
+    border:1px solid var(--panel-border);
+    border-radius:12px;
+    padding:32px;
+    max-width:400px;
+    width:90%;
+    text-align:center;
+    transform:scale(0.9);
+    transition:transform 0.3s ease;
+  }
+
+  .modal-overlay.active .modal{
+    transform:scale(1);
+  }
+
+  .modal-icon{
+    font-size:48px;
+    margin-bottom:16px;
+  }
+
+  .modal-title{
+    font-family:'Space Grotesk', sans-serif;
+    font-size:20px;
+    font-weight:600;
+    color:var(--text-hi);
+    margin-bottom:8px;
+  }
+
+  .modal-message{
+    font-size:14px;
+    color:var(--text-mid);
+    line-height:1.5;
+    margin-bottom:24px;
+  }
 </style>
 </head>
 <body id="user-page">
@@ -471,10 +555,7 @@
           <div class="user-avatar">{{ substr(auth()->user()->name, 0, 1) }}</div>
           <span>{{ auth()->user()->name }}</span>
         </div>
-        <form action="{{ route('logout') }}" method="POST" style="display: inline;">
-          @csrf
-          <button type="submit" class="logout-btn">Logout</button>
-        </form>
+        <button type="button" class="logout-btn" id="logout-btn">Logout</button>
       </div>
     </div>
 
@@ -597,24 +678,70 @@
     </div>
   </div>
 
-  <script>
-    // Live time update
-    function updateTime() {
-      const now = new Date();
-      const timeString = now.toLocaleTimeString('en-US', { 
-        hour12: false, 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        second: '2-digit' 
-      });
-      document.getElementById('live-time').textContent = timeString;
-    }
-    
-    updateTime();
-    setInterval(updateTime, 1000);
+  <!-- Logout Confirmation Modal -->
+  <div class="modal-overlay" id="logout-modal">
+    <div class="modal">
+      <div class="modal-icon">🔒</div>
+      <h3 class="modal-title">Confirm Logout</h3>
+      <p class="modal-message">Are you sure you want to log out? You will need to sign in again to access your account.</p>
+      <div style="display: flex; gap: 12px; justify-content: center;">
+        <button class="action-btn" id="cancel-logout">Cancel</button>
+        <form method="POST" action="{{ route('logout') }}" style="display: inline;">
+          @csrf
+          <button type="submit" class="action-btn primary">Logout</button>
+        </form>
+      </div>
+    </div>
+  </div>
 
-    // Page transition on load
-    document.body.classList.add('page-transition-in');
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Live time update
+      function updateTime() {
+        const now = new Date();
+        const timeString = now.toLocaleTimeString('en-US', { 
+          hour12: false, 
+          hour: '2-digit', 
+          minute: '2-digit', 
+          second: '2-digit' 
+        });
+        document.getElementById('live-time').textContent = timeString;
+      }
+      
+      updateTime();
+      setInterval(updateTime, 1000);
+
+      // Logout confirmation modal
+      const logoutBtn = document.getElementById('logout-btn');
+      const logoutModal = document.getElementById('logout-modal');
+      const cancelLogout = document.getElementById('cancel-logout');
+
+      if (logoutBtn && logoutModal) {
+        logoutBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          logoutModal.classList.add('active');
+        });
+      }
+
+      if (cancelLogout && logoutModal) {
+        cancelLogout.addEventListener('click', function(e) {
+          e.preventDefault();
+          logoutModal.classList.remove('active');
+        });
+      }
+
+      // Close modal when clicking outside
+      if (logoutModal) {
+        logoutModal.addEventListener('click', function(e) {
+          if (e.target === logoutModal) {
+            logoutModal.classList.remove('active');
+          }
+        });
+      }
+
+      // Page transition on load
+      document.body.classList.add('page-transition-in');
+    });
   </script>
 </body>
 </html>
