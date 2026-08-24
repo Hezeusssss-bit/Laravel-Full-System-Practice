@@ -4,6 +4,13 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        if (auth()->user()->is_admin) {
+            return redirect()->route('admin.dashboard');
+        } else {
+            return redirect()->route('user.dashboard');
+        }
+    }
     return view('welcome');
 });
 
@@ -34,3 +41,15 @@ Route::get('/admin/dashboard', function () {
     $users = \App\Models\User::where('is_admin', false)->get();
     return view('dashboard.admin', compact('admins', 'users'));
 })->name('admin.dashboard');
+
+Route::get('/user/dashboard', function () {
+    if (!auth()->check()) {
+        return redirect()->route('login');
+    }
+    
+    if (auth()->user()->is_admin) {
+        return redirect()->route('admin.dashboard');
+    }
+    
+    return view('dashboard.user');
+})->name('user.dashboard');

@@ -21,7 +21,7 @@ class AuthController extends Controller
                 
                 $user = Auth::user();
                 
-                $redirectUrl = $user->is_admin ? route('admin.dashboard') : '/';
+                $redirectUrl = $user->is_admin ? route('admin.dashboard') : route('user.dashboard');
                 
                 return response()->json([
                     'success' => true,
