@@ -11,11 +11,14 @@ class ProductController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('admin');
     }
 
     public function index()
     {
+        if (!auth()->user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Access denied. Admin only.'], 403);
+        }
+        
         $products = Product::with('category')->get();
         return response()->json([
             'success' => true,
@@ -25,6 +28,10 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
+        if (!auth()->user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Access denied. Admin only.'], 403);
+        }
+        
         try {
             $validated = $request->validate([
                 'sku' => 'required|string|unique:products,sku',
@@ -72,6 +79,10 @@ class ProductController extends Controller
 
     public function show($id)
     {
+        if (!auth()->user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Access denied. Admin only.'], 403);
+        }
+        
         try {
             $product = Product::with('category')->findOrFail($id);
             return response()->json([
@@ -88,6 +99,10 @@ class ProductController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Access denied. Admin only.'], 403);
+        }
+        
         try {
             $product = Product::findOrFail($id);
 
@@ -141,6 +156,10 @@ class ProductController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        if (!auth()->user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Access denied. Admin only.'], 403);
+        }
+        
         try {
             $product = Product::findOrFail($id);
 

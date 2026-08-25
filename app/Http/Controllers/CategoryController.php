@@ -12,11 +12,14 @@ class CategoryController extends Controller
     public function __construct()
     {
         $this->middleware('auth');
-        $this->middleware('admin');
     }
 
     public function index()
     {
+        if (!auth()->user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Access denied. Admin only.'], 403);
+        }
+        
         $categories = Category::with('products')->get();
         return response()->json([
             'success' => true,
@@ -26,6 +29,10 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
+        if (!auth()->user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Access denied. Admin only.'], 403);
+        }
+        
         try {
             $validated = $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name',
@@ -66,6 +73,10 @@ class CategoryController extends Controller
 
     public function show($id)
     {
+        if (!auth()->user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Access denied. Admin only.'], 403);
+        }
+        
         try {
             $category = Category::with('products')->findOrFail($id);
             return response()->json([
@@ -82,6 +93,10 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id)
     {
+        if (!auth()->user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Access denied. Admin only.'], 403);
+        }
+        
         try {
             $category = Category::findOrFail($id);
 
@@ -128,6 +143,10 @@ class CategoryController extends Controller
 
     public function destroy(Request $request, $id)
     {
+        if (!auth()->user()->is_admin) {
+            return response()->json(['success' => false, 'message' => 'Access denied. Admin only.'], 403);
+        }
+        
         try {
             $category = Category::findOrFail($id);
 
