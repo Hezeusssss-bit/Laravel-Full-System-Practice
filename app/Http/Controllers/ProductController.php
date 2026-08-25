@@ -16,7 +16,7 @@ class ProductController extends Controller
 
     public function index()
     {
-        $products = Product::all();
+        $products = Product::with('category')->get();
         return response()->json([
             'success' => true,
             'products' => $products
@@ -29,7 +29,7 @@ class ProductController extends Controller
             $validated = $request->validate([
                 'sku' => 'required|string|unique:products,sku',
                 'name' => 'required|string|max:255',
-                'category' => 'required|string|max:255',
+                'category_id' => 'nullable|exists:categories,id',
                 'brand' => 'nullable|string|max:255',
                 'unit' => 'required|string|max:50',
                 'purchase_price' => 'required|numeric|min:0',
@@ -73,7 +73,7 @@ class ProductController extends Controller
     public function show($id)
     {
         try {
-            $product = Product::findOrFail($id);
+            $product = Product::with('category')->findOrFail($id);
             return response()->json([
                 'success' => true,
                 'product' => $product
@@ -94,7 +94,7 @@ class ProductController extends Controller
             $validated = $request->validate([
                 'sku' => 'required|string|unique:products,sku,' . $id,
                 'name' => 'required|string|max:255',
-                'category' => 'required|string|max:255',
+                'category_id' => 'nullable|exists:categories,id',
                 'brand' => 'nullable|string|max:255',
                 'unit' => 'required|string|max:50',
                 'purchase_price' => 'required|numeric|min:0',

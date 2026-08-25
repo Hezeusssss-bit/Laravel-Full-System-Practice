@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('sku')->unique();
             $table->string('name');
-            $table->string('category');
+            $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');
             $table->string('brand')->nullable();
             $table->string('unit')->default('pcs');
             $table->decimal('purchase_price', 10, 2);

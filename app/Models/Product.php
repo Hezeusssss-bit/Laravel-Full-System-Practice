@@ -9,7 +9,7 @@ class Product extends Model
     protected $fillable = [
         'sku',
         'name',
-        'category',
+        'category_id',
         'brand',
         'unit',
         'purchase_price',
@@ -27,4 +27,9 @@ class Product extends Model
         'current_stock' => 'integer',
         'minimum_stock_level' => 'integer',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }

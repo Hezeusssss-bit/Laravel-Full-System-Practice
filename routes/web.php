@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CategoryController;
 
 Route::get('/', function () {
     if (auth()->check()) {
@@ -60,3 +61,11 @@ Route::get('/products/{id}', [ProductController::class, 'show'])->name('products
 Route::post('/products', [ProductController::class, 'store'])->name('products.store');
 Route::match(['put', 'post'], '/products/{id}', [ProductController::class, 'update'])->name('products.update');
 Route::match(['delete', 'post'], '/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+// Category Management Routes
+Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
+Route::get('/categories/stats', [CategoryController::class, 'getStats'])->name('categories.stats');
+Route::get('/categories/{id}', [CategoryController::class, 'show'])->name('categories.show');
+Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
+Route::match(['put', 'post'], '/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
+Route::match(['delete', 'post'], '/categories/{id}', [CategoryController::class, 'destroy'])->name('categories.destroy');
